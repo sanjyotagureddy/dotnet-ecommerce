@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  bellezone.user.api:
+    image: ${DOCKER_REGISTRY-}bellezoneuserapi
+    build:
+      context: .
+      dockerfile: src/User/BelleZone.User.Api/Dockerfile
+
+  redis.cache:
+    image: redis:latest
+
+  database:
+    image: mcr.microsoft.com/mssql/server:latest
+  
+  elasticsearch:  
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.1
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.14.1
