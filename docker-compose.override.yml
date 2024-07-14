@@ -1,0 +1,66 @@
+version: '3.4'
+
+services:
+  database:
+    container_name: database
+    environment:
+      SA_PASSWORD: "SwN12345678"
+      ACCEPT_EULA: "Y"
+    restart: always
+    ports:
+      - "1433:1433"
+
+  elasticsearch:
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - cluster.name-es-docker-cluster
+      - xpack.security.enabled=false
+      - "discovery.type=single-node"
+    networks:
+      - es-net
+    volumes:
+      - data01:/urs/share/elasticsearch/data 
+    ports:
+      - 9200:9200
+
+  redis.cache:
+    container_name: redis.cache
+    restart: always
+    ports:
+      - "6379:6379"
+  
+  kibana:
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - es-net
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+
+
+  bellezone.user.api:
+    container_name: bellezone.user.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:OrderingConnectionString=Server=localhost;Database=database;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True"
+      - "ElasticConfiguration:Uri=Server=http://elasticsearch"
+      - ASPNETCORE_URLS=http://+:8001
+    ports:
+      - "8001:8001"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+volumes:
+  data01:
+    driver: local
+networks:
+  es-net:
+    driver: bridge
+
+  
