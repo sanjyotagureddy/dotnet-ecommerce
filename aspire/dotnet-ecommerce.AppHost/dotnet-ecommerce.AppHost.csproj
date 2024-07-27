@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Product\BelleZone.Product.Api\BelleZone.Product.Api.csproj" />
     <ProjectReference Include="..\..\src\User\BelleZone.User.Api\BelleZone.User.Api.csproj" />
   </ItemGroup>
 

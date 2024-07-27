@@ -1,0 +1,6 @@
+@BelleZone.Product.Api_HostAddress = http://localhost:5104
+
+GET {{BelleZone.Product.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
