@@ -7,6 +7,7 @@ on:
 
 jobs:
   tag:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -20,8 +21,8 @@ jobs:
       - name: Get latest tag
         id: get_latest_tag
         run: |
-          echo "LATEST_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
-        continue-on-error: true
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
 
       - name: Get commit messages
         id: get_commits
@@ -32,7 +33,7 @@ jobs:
       - name: Determine version bump
         id: determine_bump
         run: |
-          COMMITS=${{ env.COMMITS }}
+          COMMITS="${{ env.COMMITS }}"
           if echo "$COMMITS" | grep -q 'BREAKING CHANGE'; then
             echo "BUMP=major" >> $GITHUB_ENV
           elif echo "$COMMITS" | grep -q 'feat'; then
@@ -48,8 +49,8 @@ jobs:
       - name: Determine new version
         id: determine_version
         run: |
-          LATEST_TAG=${{ env.LATEST_TAG }}
-          BUMP=${{ env.BUMP }}
+          LATEST_TAG="${{ env.LATEST_TAG }}"
+          BUMP="${{ env.BUMP }}"
           if [ -z "$LATEST_TAG" ]; then
             NEW_TAG="v1.0.0.1"
           else
