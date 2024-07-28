@@ -1,0 +1,88 @@
+name: Tag on Merge
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+
+      - name: Get latest tag
+        id: get_latest_tag
+        run: |
+          echo "LATEST_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+        continue-on-error: true
+
+      - name: Get commit messages
+        id: get_commits
+        run: |
+          COMMITS=$(git log -1 --pretty=format:"%s")
+          echo "COMMITS=$COMMITS" >> $GITHUB_ENV
+
+      - name: Determine version bump
+        id: determine_bump
+        run: |
+          COMMITS=${{ env.COMMITS }}
+          if echo "$COMMITS" | grep -q 'BREAKING CHANGE'; then
+            echo "BUMP=major" >> $GITHUB_ENV
+          elif echo "$COMMITS" | grep -q 'feat'; then
+            echo "BUMP=minor" >> $GITHUB_ENV
+          elif echo "$COMMITS" | grep -q 'refactor'; then
+            echo "BUMP=minor" >> $GITHUB_ENV
+          elif echo "$COMMITS" | grep -q 'fix'; then
+            echo "BUMP=patch" >> $GITHUB_ENV
+          else
+            echo "BUMP=none" >> $GITHUB_ENV
+          fi
+
+      - name: Determine new version
+        id: determine_version
+        run: |
+          LATEST_TAG=${{ env.LATEST_TAG }}
+          BUMP=${{ env.BUMP }}
+          if [ -z "$LATEST_TAG" ]; then
+            NEW_TAG="v1.0.0.1"
+          else
+            IFS='.' read -ra VERSION_PARTS <<< "${LATEST_TAG#v}"
+            MAJOR=${VERSION_PARTS[0]}
+            MINOR=${VERSION_PARTS[1]}
+            PATCH=${VERSION_PARTS[2]}
+            BUILD=${VERSION_PARTS[3]}
+            if [ "$BUMP" = "major" ]; then
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              BUILD=1
+            elif [ "$BUMP" = "minor" ]; then
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              BUILD=1
+            elif [ "$BUMP" = "patch" ]; then
+              PATCH=$((PATCH + 1))
+              BUILD=1
+            else
+              BUILD=$((BUILD + 1))
+            fi
+            NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}.${BUILD}"
+          fi
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+
+      - name: Create new tag
+        run: |
+          git tag ${{ env.NEW_TAG }}
+
+      - name: Push new tag
+        run: |
+          git push origin ${{ env.NEW_TAG }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
