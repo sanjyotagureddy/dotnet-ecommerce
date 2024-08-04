@@ -9,17 +9,20 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Product/BelleZone.Product.Api/BelleZone.Product.Api.csproj", "src/Product/BelleZone.Product.Api/"]
-RUN dotnet restore "./src/Product/BelleZone.Product.Api/BelleZone.Product.Api.csproj"
+COPY ["src/Product/MeraStore.Product.Api/MeraStore.Product.Api.csproj", "src/Product/MeraStore.Product.Api/"]
+COPY ["aspire/dotnet-ecommerce.ServiceDefaults/dotnet-ecommerce.ServiceDefaults.csproj", "aspire/dotnet-ecommerce.ServiceDefaults/"]
+COPY ["src/Product/MeraStore.Product.Models/MeraStore.Product.Models.csproj", "src/Product/MeraStore.Product.Models/"]
+COPY ["src/Product/MeraStore.Product.Service/MeraStore.Product.Services.csproj", "src/Product/MeraStore.Product.Service/"]
+RUN dotnet restore "./src/Product/MeraStore.Product.Api/MeraStore.Product.Api.csproj"
 COPY . .
-WORKDIR "/src/src/Product/BelleZone.Product.Api"
-RUN dotnet build "./BelleZone.Product.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/src/Product/MeraStore.Product.Api"
+RUN dotnet build "./MeraStore.Product.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./BelleZone.Product.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./MeraStore.Product.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "BelleZone.Product.Api.dll"]
+ENTRYPOINT ["dotnet", "MeraStore.Product.Api.dll"]

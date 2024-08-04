@@ -1,16 +1,16 @@
 
 services:
-  bellezone.user.api:
-    image: ${DOCKER_REGISTRY-}bellezoneuserapi
+  merastore.user.api:
+    image: ${DOCKER_REGISTRY-}merastoreuserapi
     build:
       context: .
-      dockerfile: src/User/BelleZone.User.Api/Dockerfile
+      dockerfile: src/User/MeraStore.User.Api/Dockerfile
 
-  bellezone.product.api:
-    image: ${DOCKER_REGISTRY-}bellezoneproductapi
+  merastore.product.api:
+    image: ${DOCKER_REGISTRY-}merastoreproductapi
     build:
       context: .
-      dockerfile: src/Product/BelleZone.Product.Api/Dockerfile
+      dockerfile: src/Product/MeraStore.Product.Api/Dockerfile
 
   redis.cache:
     image: redis:latest
