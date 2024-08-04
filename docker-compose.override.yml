@@ -42,8 +42,8 @@ services:
       - 5601:5601
 
 
-  bellezone.user.api:
-    container_name: bellezone.user.api
+  merastore.user.api:
+    container_name: merastore.user.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:OrderingConnectionString=Server=database;Database=UserDb;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True"
@@ -55,8 +55,8 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
 
-  bellezone.product.api:
-    container_name: bellezone.product.api
+  merastore.product.api:
+    container_name: merastore.product.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:OrderingConnectionString=Server=database;Database=ProductDb;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True"

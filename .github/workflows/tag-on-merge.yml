@@ -9,8 +9,10 @@ jobs:
   tag:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags
 
       - name: Set up Git
         run: |
@@ -18,63 +20,82 @@ jobs:
           git config user.email "action@github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
 
-      - name: Get latest tag
-        id: get_latest_tag
-        run: |
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
-
-      - name: Get commit messages
-        id: get_commits
-        run: |
-          COMMITS=$(git log -1 --pretty=format:"%s")
-          echo "COMMITS=$COMMITS" >> $GITHUB_ENV
-
-      - name: Determine version bump
-        id: determine_bump
-        run: |
-          COMMITS="${{ env.COMMITS }}"
-          if echo "$COMMITS" | grep -q 'BREAKING CHANGE'; then
-            echo "BUMP=major" >> $GITHUB_ENV
-          elif echo "$COMMITS" | grep -q 'feat'; then
-            echo "BUMP=minor" >> $GITHUB_ENV
-          elif echo "$COMMITS" | grep -q 'refactor'; then
-            echo "BUMP=minor" >> $GITHUB_ENV
-          elif echo "$COMMITS" | grep -q 'fix'; then
-            echo "BUMP=patch" >> $GITHUB_ENV
-          else
-            echo "BUMP=none" >> $GITHUB_ENV
-          fi
-
       - name: Determine new version
-        id: determine_version
+        id: version
         run: |
-          LATEST_TAG="${{ env.LATEST_TAG }}"
-          BUMP="${{ env.BUMP }}"
-          if [ -z "$LATEST_TAG" ]; then
-            NEW_TAG="v1.0.0.1"
+          echo "Fetching latest tags..."
+          git fetch --tags
+
+          echo "Getting the latest tag..."
+          LATEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "0.0.0.0")
+          echo "Latest tag: $LATEST_TAG"
+
+          # Remove the 'v' prefix if present
+          LATEST_TAG="${LATEST_TAG#v}"
+
+          # Split the version into an array
+          IFS='.' read -ra VERSION_PARTS <<< "$LATEST_TAG"
+          echo "Version parts: ${VERSION_PARTS[@]}"
+
+          # Initialize version parts
+          MAJOR=${VERSION_PARTS[0]:-0}
+          MINOR=${VERSION_PARTS[1]:-0}
+          PATCH=${VERSION_PARTS[2]:-0}
+          BUILD=${VERSION_PARTS[3]:-0}
+          echo "Initial version: MAJOR=$MAJOR, MINOR=$MINOR, PATCH=$PATCH, BUILD=$BUILD"
+
+          # Get the commit messages from the latest commit
+          COMMITS=$(git log --format=%B -n 1 HEAD)
+          echo "Commit messages: $COMMITS"
+
+          # Debugging: Print patterns and commit messages
+          echo "Pattern for MAJOR increment: '^MAJOR:'"
+          echo "Matching commit messages against the pattern:"
+          echo "$COMMITS" | grep -q '^MAJOR:' && echo "Pattern matched for MAJOR increment" || echo "Pattern did not match for MAJOR increment"
+
+          if echo "$COMMITS" | grep -q '^MAJOR:'; then
+            echo "Incrementing MAJOR version"
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+            BUILD=0
           else
-            IFS='.' read -ra VERSION_PARTS <<< "${LATEST_TAG#v}"
-            MAJOR=${VERSION_PARTS[0]}
-            MINOR=${VERSION_PARTS[1]}
-            PATCH=${VERSION_PARTS[2]}
-            BUILD=${VERSION_PARTS[3]}
-            if [ "$BUMP" = "major" ]; then
-              MAJOR=$((MAJOR + 1))
-              MINOR=0
-              PATCH=0
-              BUILD=1
-            elif [ "$BUMP" = "minor" ]; then
+            echo "Pattern for MINOR increment: '^MINOR:'"
+            echo "Matching commit messages against the pattern:"
+            echo "$COMMITS" | grep -q '^MINOR:' && echo "Pattern matched for MINOR increment" || echo "Pattern did not match for MINOR increment"
+
+            if echo "$COMMITS" | grep -q '^MINOR:'; then
+              echo "Incrementing MINOR version"
               MINOR=$((MINOR + 1))
               PATCH=0
-              BUILD=1
-            elif [ "$BUMP" = "patch" ]; then
-              PATCH=$((PATCH + 1))
-              BUILD=1
+              BUILD=0
             else
-              BUILD=$((BUILD + 1))
+              echo "Pattern for PATCH increment (with colon): '^(feat|fix|feature|bug|chore|refactor):'"
+              echo "Matching commit messages against the pattern:"
+              echo "$COMMITS" | grep -E -q '^(feat|fix|feature|bug|chore|refactor):' && echo "Pattern matched for PATCH increment (with colon)" || echo "Pattern did not match for PATCH increment (with colon)"
+              
+              if echo "$COMMITS" | grep -E -q '^(feat|fix|feature|bug|chore|refactor):'; then
+                echo "Incrementing PATCH version based on keyword with colon"
+                PATCH=$((PATCH + 1))
+                BUILD=0
+              else
+                echo "Pattern for PATCH increment (without colon): '^(feat|fix|feature|bug|chore|refactor)'"
+                echo "Matching commit messages against the pattern:"
+                echo "$COMMITS" | grep -E -q '^(feat|fix|feature|bug|chore|refactor)' && echo "Pattern matched for PATCH increment (without colon)" || echo "Pattern did not match for PATCH increment (without colon)"
+                
+                if echo "$COMMITS" | grep -E -q '^(feat|fix|feature|bug|chore|refactor)'; then
+                  echo "Incrementing PATCH version based on keyword without colon"
+                  echo "before version: MAJOR=$MAJOR, MINOR=$MINOR, PATCH=$PATCH, BUILD=$BUILD"
+                  PATCH=$((PATCH + 1))
+                  echo "After version: MAJOR=$MAJOR, MINOR=$MINOR, PATCH=$PATCH, BUILD=$BUILD"
+                  BUILD=0
+                  echo "last version: MAJOR=$MAJOR, MINOR=$MINOR, PATCH=$PATCH, BUILD=$BUILD"
+                else
+                  echo "No recognized keywords found. Incrementing BUILD version"
+                  BUILD=$((BUILD + 1))
+                fi
+              fi
             fi
-            NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}.${BUILD}"
           fi
 
           # Check if the tag already exists and find the next available one
@@ -85,12 +106,15 @@ jobs:
 
           echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
 
-      - name: Create new tag
+      - name: Create and push new tag
         run: |
-          git tag ${{ env.NEW_TAG }}
+          echo "Checking if the new tag already exists..."
+          # Check if the new tag already exists
+          if git rev-parse "refs/tags/${{ env.NEW_TAG }}" >/dev/null 2>&1; then
+            echo "Tag ${NEW_TAG} already exists. Exiting."
+            exit 0
+          fi
 
-      - name: Push new tag
-        run: |
+          echo "Creating and pushing new tag ${NEW_TAG}"
+          git tag ${{ env.NEW_TAG }}
           git push origin ${{ env.NEW_TAG }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
