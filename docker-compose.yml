@@ -7,6 +7,12 @@ services:
       context: .
       dockerfile: src/User/BelleZone.User.Api/Dockerfile
 
+  bellezone.product.api:
+    image: ${DOCKER_REGISTRY-}bellezoneproductapi
+    build:
+      context: .
+      dockerfile: src/Product/BelleZone.Product.Api/Dockerfile
+
   redis.cache:
     image: redis:latest
 
