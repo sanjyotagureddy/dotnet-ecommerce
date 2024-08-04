@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Product\BelleZone.Product.Api\BelleZone.Product.Api.csproj" />
-    <ProjectReference Include="..\..\src\User\BelleZone.User.Api\BelleZone.User.Api.csproj" />
+    <ProjectReference Include="..\..\src\Product\MeraStore.Product.Api\MeraStore.Product.Api.csproj" />
+    <ProjectReference Include="..\..\src\User\MeraStore.User.Api\MeraStore.User.Api.csproj" />
   </ItemGroup>
 
 </Project>
