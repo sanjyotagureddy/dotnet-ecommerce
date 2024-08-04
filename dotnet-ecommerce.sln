@@ -17,35 +17,37 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnet-ecommerce.AppHost", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnet-ecommerce.ServiceDefaults", "aspire\dotnet-ecommerce.ServiceDefaults\dotnet-ecommerce.ServiceDefaults.csproj", "{1E0C0F83-FE0A-4381-B596-C9417BF02ACF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BelleZone.User.Api", "src\User\BelleZone.User.Api\BelleZone.User.Api.csproj", "{AACF876A-E29B-4687-8746-9D38F9EC09DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeraStore.User.Api", "src\User\MeraStore.User.Api\MeraStore.User.Api.csproj", "{AACF876A-E29B-4687-8746-9D38F9EC09DC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BelleZone.User.Api.UnitTests", "tests\UnitTests\User\BelleZone.User.Api.UnitTests\BelleZone.User.Api.UnitTests.csproj", "{140A4C04-2134-4F07-A9EF-A3B589468D84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeraStore.User.Api.UnitTests", "tests\UnitTests\User\MeraStore.User.Api.UnitTests\MeraStore.User.Api.UnitTests.csproj", "{140A4C04-2134-4F07-A9EF-A3B589468D84}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{CD9C71D4-44C5-4BB4-9CF4-3A36DC165CFA}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{5805F417-E841-4E09-AA9A-F2373ACA76A6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BelleZone.User.Shared.Common", "shared\BelleZone.User.Shared.Common\BelleZone.User.Shared.Common.csproj", "{5EB88C8D-6250-40FA-AE48-1649FFBE5576}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeraStore.User.Shared.Common", "shared\MeraStore.User.Shared.Common\MeraStore.User.Shared.Common.csproj", "{5EB88C8D-6250-40FA-AE48-1649FFBE5576}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BelleZone.Shared.Common.Logging", "shared\BelleZone.Shared.Common.Logging\BelleZone.Shared.Common.Logging.csproj", "{F6D11960-DD4F-4A73-B934-422D76826D9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeraStore.Shared.Common.Logging", "shared\MeraStore.Shared.Common.Logging\MeraStore.Shared.Common.Logging.csproj", "{F6D11960-DD4F-4A73-B934-422D76826D9E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BelleZone.Shared.Common.WebApi", "shared\BelleZone.Shared.Common.WebApi\BelleZone.Shared.Common.WebApi.csproj", "{2CD0CE13-18C6-468A-A124-7829D8327921}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeraStore.Shared.Common.WebApi", "shared\MeraStore.Shared.Common.WebApi\MeraStore.Shared.Common.WebApi.csproj", "{2CD0CE13-18C6-468A-A124-7829D8327921}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Product", "Product", "{35D79B4B-C8B9-443B-B7BF-BA7B461E44E1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BelleZone.Product.Api", "src\Product\BelleZone.Product.Api\BelleZone.Product.Api.csproj", "{4139D948-7CA8-405C-A9A8-E7A69681266D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeraStore.Product.Api", "src\Product\MeraStore.Product.Api\MeraStore.Product.Api.csproj", "{4139D948-7CA8-405C-A9A8-E7A69681266D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BelleZone.Product.Models", "src\Product\BelleZone.Product.Models\BelleZone.Product.Models.csproj", "{3B707EAC-A8AA-4079-BD63-B733F24B4A6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeraStore.Product.Models", "src\Product\MeraStore.Product.Models\MeraStore.Product.Models.csproj", "{3B707EAC-A8AA-4079-BD63-B733F24B4A6A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BelleZone.Product.Services", "src\Product\BelleZone.Product.Service\BelleZone.Product.Services.csproj", "{609B6159-BE1E-4EDF-BE6E-3F3EC771D81E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeraStore.Product.Services", "src\Product\MeraStore.Product.Service\MeraStore.Product.Services.csproj", "{609B6159-BE1E-4EDF-BE6E-3F3EC771D81E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "User", "User", "{53CED3BA-554B-43B4-8863-66FCEA6F5448}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BelleZone.Product.Api.Tests", "tests\UnitTests\Product\BelleZone.Product.Api.Tests\BelleZone.Product.Api.Tests.csproj", "{DB78B74E-579C-47A8-A4C5-537540986758}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeraStore.Product.Api.Tests", "tests\UnitTests\Product\MeraStore.Product.Api.Tests\MeraStore.Product.Api.Tests.csproj", "{DB78B74E-579C-47A8-A4C5-537540986758}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BelleZone.Product.Services.Tests", "tests\UnitTests\Product\BelleZone.Product.Services.Tests\BelleZone.Product.Services.Tests.csproj", "{8E1C08EC-66A6-4840-A052-0F6A4B76CDD5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeraStore.Product.Services.Tests", "tests\UnitTests\Product\MeraStore.Product.Services.Tests\MeraStore.Product.Services.Tests.csproj", "{8E1C08EC-66A6-4840-A052-0F6A4B76CDD5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Product", "Product", "{BE816188-0BE5-4A26-A168-637EF516731D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "services", "services", "{922300D2-E3E8-40DF-973E-70D1448A9950}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -110,7 +112,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{33CE81DF-6E83-4764-B9EE-DA58AD84E071} = {F6E1103B-8F8C-4C0D-AE0A-8685B5B0A388}
+		{33CE81DF-6E83-4764-B9EE-DA58AD84E071} = {922300D2-E3E8-40DF-973E-70D1448A9950}
 		{3AD35F56-3FD6-4DE8-8029-BF4EFA66429A} = {F5DF819D-F259-4403-89FA-2876108A7FE9}
 		{1E0C0F83-FE0A-4381-B596-C9417BF02ACF} = {F5DF819D-F259-4403-89FA-2876108A7FE9}
 		{AACF876A-E29B-4687-8746-9D38F9EC09DC} = {33CE81DF-6E83-4764-B9EE-DA58AD84E071}
@@ -119,7 +121,7 @@ Global
 		{5EB88C8D-6250-40FA-AE48-1649FFBE5576} = {11651586-05DB-4FC8-A079-F97D539251EA}
 		{F6D11960-DD4F-4A73-B934-422D76826D9E} = {11651586-05DB-4FC8-A079-F97D539251EA}
 		{2CD0CE13-18C6-468A-A124-7829D8327921} = {11651586-05DB-4FC8-A079-F97D539251EA}
-		{35D79B4B-C8B9-443B-B7BF-BA7B461E44E1} = {F6E1103B-8F8C-4C0D-AE0A-8685B5B0A388}
+		{35D79B4B-C8B9-443B-B7BF-BA7B461E44E1} = {922300D2-E3E8-40DF-973E-70D1448A9950}
 		{4139D948-7CA8-405C-A9A8-E7A69681266D} = {35D79B4B-C8B9-443B-B7BF-BA7B461E44E1}
 		{3B707EAC-A8AA-4079-BD63-B733F24B4A6A} = {35D79B4B-C8B9-443B-B7BF-BA7B461E44E1}
 		{609B6159-BE1E-4EDF-BE6E-3F3EC771D81E} = {35D79B4B-C8B9-443B-B7BF-BA7B461E44E1}
@@ -127,6 +129,7 @@ Global
 		{DB78B74E-579C-47A8-A4C5-537540986758} = {BE816188-0BE5-4A26-A168-637EF516731D}
 		{8E1C08EC-66A6-4840-A052-0F6A4B76CDD5} = {BE816188-0BE5-4A26-A168-637EF516731D}
 		{BE816188-0BE5-4A26-A168-637EF516731D} = {CD9C71D4-44C5-4BB4-9CF4-3A36DC165CFA}
+		{922300D2-E3E8-40DF-973E-70D1448A9950} = {F6E1103B-8F8C-4C0D-AE0A-8685B5B0A388}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {73733C57-C59E-40DC-A294-84A0941ABE8D}
