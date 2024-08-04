@@ -16,6 +16,7 @@ jobs:
         run: |
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
 
       - name: Get latest tag
         id: get_latest_tag
@@ -75,6 +76,13 @@ jobs:
             fi
             NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}.${BUILD}"
           fi
+
+          # Check if the tag already exists and find the next available one
+          while git rev-parse "refs/tags/$NEW_TAG" >/dev/null 2>&1; do
+            BUILD=$((BUILD + 1))
+            NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}.${BUILD}"
+          done
+
           echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
 
       - name: Create new tag
