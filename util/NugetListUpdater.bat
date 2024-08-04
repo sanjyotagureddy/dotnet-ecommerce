@@ -1,1 +1,1 @@
-nuget list dotnet-ecommerce.sln >> ..\NugetList.md
+nuget list ..\dotnet-ecommerce.sln >> ..\NugetList.md
