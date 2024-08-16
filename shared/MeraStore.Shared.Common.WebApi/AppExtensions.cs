@@ -10,4 +10,17 @@ public static class AppExtensions
     app.UseMiddleware<ErrorHandlingMiddleware>();
     return app;
   }
+
+  public static IApplicationBuilder UseCorrelationId(this IApplicationBuilder app)
+  {
+    app.UseMiddleware<CorrelationIdMiddleware>();
+    return app;
+  }
+
+  public static IApplicationBuilder UseCommonMiddlewares(this IApplicationBuilder app)
+  {
+    app.UseCorrelationId();
+    app.UseCustomExceptionHandler();
+    return app;
+  }
 }

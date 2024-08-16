@@ -15,11 +15,11 @@ public static class LoggingExtension
     {
       configuration.Enrich.FromLogContext()
         .ReadFrom.Configuration(context.Configuration)
-        .Enrich.WithProperty("Application", appName)
+        .Enrich.WithProperty("app-name", appName)
         .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName ?? "Development")
         .Enrich.WithAssemblyName()
         .Enrich.WithMachineName()
-        .WriteTo.Console(outputTemplate: "[{SourceContext}]{NewLine}{Timestamp:ddMMyyyy HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}")
+        .WriteTo.Console(outputTemplate: $"[{{SourceContext}}-{appName}-{{MachineName}}]{{NewLine}}{{Timestamp:ddMMyyyy HH:mm:ss}} {{Level:u4}}] {{Message:lj}}{{NewLine}}{{Exception}}")
         .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(context.Configuration["ElasticConfiguration:Uri"]))
         {
 
@@ -37,6 +37,18 @@ public static class LoggingExtension
         .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(context.Configuration["ElasticConfiguration:Uri"]))
         {
           IndexFormat = $"efcore-logs-{context.HostingEnvironment.EnvironmentName?.ToLower().Replace(".", "-")}-{DateTime.Now:yyyy-MM}",
+          AutoRegisterTemplate = true,
+          NumberOfShards = 2,
+          NumberOfReplicas = 1
+        }));
+
+      // ASP.NET Core Logs
+      configuration.WriteTo.Logger(lc => lc
+        .Filter.ByIncludingOnly(logEvent => logEvent.Properties.TryGetValue("SourceContext", out var sourceContext)
+                                            && sourceContext.ToString().StartsWith("\"Microsoft.AspNetCore\""))
+        .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(context.Configuration["ElasticConfiguration:Uri"]))
+        {
+          IndexFormat = $"aspnetcore-logs-{context.HostingEnvironment.EnvironmentName?.ToLower().Replace(".", "-")}-{DateTime.Now:yyyy-MM}",
           AutoRegisterTemplate = true,
           NumberOfShards = 2,
           NumberOfReplicas = 1
