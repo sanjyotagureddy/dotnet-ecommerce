@@ -1,6 +1,10 @@
+using MeraStore.Shared.Common.Logging;
+using MeraStore.User.Shared.Common;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+builder.Host.UseLogging(Constants.ServiceIdentifiers.User);
 
 // Add services to the container.
 
