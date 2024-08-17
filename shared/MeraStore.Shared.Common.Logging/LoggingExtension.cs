@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using MeraStore.User.Shared.Common;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nest;
@@ -14,7 +15,7 @@ public static class LoggingExtension
   public static IServiceCollection AddElasticsearch(this IServiceCollection services, IConfiguration configuration)
   {
     var settings = new ConnectionSettings(new Uri(configuration["ElasticConfiguration:Uri"]!))
-      .DefaultIndex("request-response-logs");
+      .DefaultIndex(Constants.SerilogIndex.RequestResponse);
 
     var elasticClient = new ElasticClient(settings);
     services.AddSingleton<IElasticClient>(elasticClient);

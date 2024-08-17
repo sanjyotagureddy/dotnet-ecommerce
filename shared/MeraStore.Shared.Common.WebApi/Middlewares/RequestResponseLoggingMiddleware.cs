@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
 using MeraStore.Shared.Common.Logging.Models;
+using MeraStore.User.Shared.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Nest;
@@ -101,7 +102,7 @@ public class RequestResponseLoggingMiddleware(RequestDelegate next, IElasticClie
       Content = content
     };
 
-    var response = await elasticClient.IndexAsync(document, idx => idx.Index("request-response-logs"));
+    var response = await elasticClient.IndexAsync(document, idx => idx.Index(Constants.SerilogIndex.RequestResponse));
 
     if (!response.IsValid)
     {

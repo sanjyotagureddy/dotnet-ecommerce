@@ -13,4 +13,10 @@ public static class Constants
   {
     public static readonly string CorrelationId = "x-correlation-id";
   }
+
+  public static class SerilogIndex
+  {
+    public static readonly string RequestResponse = "request-response-logs";
+    public static readonly string User = "user";
+  }
 }

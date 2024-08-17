@@ -1,5 +1,3 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using MeraStore.Shared.Common.Logging;
 using MeraStore.Shared.Common.WebApi;
 using MeraStore.User.Shared.Common;
@@ -11,29 +9,18 @@ builder.Host.UseLogging(Constants.ServiceIdentifiers.Product);
 
 // Add services to the container.
 
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-  options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-  options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
-  options.JsonSerializerOptions.WriteIndented = true;
-  options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-});
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddElasticsearch(builder.Configuration);
-builder.Services.AddHttpContextAccessor();
+builder.Services.AddDefaultServices(builder.Configuration);
 
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
+app.UseResponseCompression();
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
 
-
+app.UseHealthChecks("/heath");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
