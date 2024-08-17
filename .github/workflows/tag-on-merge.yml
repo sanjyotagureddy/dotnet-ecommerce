@@ -2,8 +2,7 @@ name: Tag on Merge
 
 on:
   push:
-    branches:
-      - master
+    branches: [ "master" ]
 
 jobs:
   tag:
@@ -47,54 +46,25 @@ jobs:
           COMMITS=$(git log --format=%B -n 1 HEAD)
           echo "Commit messages: $COMMITS"
 
-          # Debugging: Print patterns and commit messages
-          echo "Pattern for MAJOR increment: '^MAJOR:'"
-          echo "Matching commit messages against the pattern:"
-          echo "$COMMITS" | grep -q '^MAJOR:' && echo "Pattern matched for MAJOR increment" || echo "Pattern did not match for MAJOR increment"
-
-          if echo "$COMMITS" | grep -q '^MAJOR:'; then
+          # Increment version based on commit messages
+          if echo "$COMMITS" | grep -E '\bMAJOR\b|\(MAJOR\)|\[MAJOR\]' >/dev/null; then
             echo "Incrementing MAJOR version"
             MAJOR=$((MAJOR + 1))
             MINOR=0
             PATCH=0
             BUILD=0
+          elif echo "$COMMITS" | grep -E '\bMINOR\b|\(MINOR\)|\[MINOR\]' >/dev/null; then
+            echo "Incrementing MINOR version"
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            BUILD=0
+          elif echo "$COMMITS" | grep -E '\b(feat|fix|feature|bug|chore|refactor)\b|\(feat\)|\[feat\]|\(fix\)|\[fix\]|\(feature\)|\[feature\]|\(bug\)|\[bug\]|\(chore\)|\[chore\]|\(refactor\)|\[refactor\]' >/dev/null; then
+            echo "Incrementing PATCH version based on keyword"
+            PATCH=$((PATCH + 1))
+            BUILD=0
           else
-            echo "Pattern for MINOR increment: '^MINOR:'"
-            echo "Matching commit messages against the pattern:"
-            echo "$COMMITS" | grep -q '^MINOR:' && echo "Pattern matched for MINOR increment" || echo "Pattern did not match for MINOR increment"
-
-            if echo "$COMMITS" | grep -q '^MINOR:'; then
-              echo "Incrementing MINOR version"
-              MINOR=$((MINOR + 1))
-              PATCH=0
-              BUILD=0
-            else
-              echo "Pattern for PATCH increment (with colon): '^(feat|fix|feature|bug|chore|refactor):'"
-              echo "Matching commit messages against the pattern:"
-              echo "$COMMITS" | grep -E -q '^(feat|fix|feature|bug|chore|refactor):' && echo "Pattern matched for PATCH increment (with colon)" || echo "Pattern did not match for PATCH increment (with colon)"
-              
-              if echo "$COMMITS" | grep -E -q '^(feat|fix|feature|bug|chore|refactor):'; then
-                echo "Incrementing PATCH version based on keyword with colon"
-                PATCH=$((PATCH + 1))
-                BUILD=0
-              else
-                echo "Pattern for PATCH increment (without colon): '^(feat|fix|feature|bug|chore|refactor)'"
-                echo "Matching commit messages against the pattern:"
-                echo "$COMMITS" | grep -E -q '^(feat|fix|feature|bug|chore|refactor)' && echo "Pattern matched for PATCH increment (without colon)" || echo "Pattern did not match for PATCH increment (without colon)"
-                
-                if echo "$COMMITS" | grep -E -q '^(feat|fix|feature|bug|chore|refactor)'; then
-                  echo "Incrementing PATCH version based on keyword without colon"
-                  echo "before version: MAJOR=$MAJOR, MINOR=$MINOR, PATCH=$PATCH, BUILD=$BUILD"
-                  PATCH=$((PATCH + 1))
-                  echo "After version: MAJOR=$MAJOR, MINOR=$MINOR, PATCH=$PATCH, BUILD=$BUILD"
-                  BUILD=0
-                  echo "last version: MAJOR=$MAJOR, MINOR=$MINOR, PATCH=$PATCH, BUILD=$BUILD"
-                else
-                  echo "No recognized keywords found. Incrementing BUILD version"
-                  BUILD=$((BUILD + 1))
-                fi
-              fi
-            fi
+            echo "No recognized keywords found. Incrementing BUILD version"
+            BUILD=$((BUILD + 1))
           fi
 
           # Output the new version to the environment file
