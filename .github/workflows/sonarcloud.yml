@@ -43,11 +43,8 @@ jobs:
           New-Item -Path .\.sonar\scanner -ItemType Directory -Force
           dotnet tool install --global dotnet-sonarscanner
 
-      - name: Check and install Aspire workload if absent
-        run: |
-          if (-not (dotnet workload list | Select-String -Pattern "aspire")) {
-            dotnet workload install aspire
-          }
+      - name: Restore Aspire
+        run: dotnet workload install aspire
 
       - name: Build and analyze
         env:
