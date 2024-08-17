@@ -16,10 +16,16 @@ public static class AppExtensions
     app.UseMiddleware<CorrelationIdMiddleware>();
     return app;
   }
+  public static IApplicationBuilder UseApiLogging(this IApplicationBuilder app)
+  {
+    app.UseMiddleware<RequestResponseLoggingMiddleware>();
+    return app;
+  }
 
   public static IApplicationBuilder UseCommonMiddlewares(this IApplicationBuilder app)
   {
     app.UseCorrelationId();
+    app.UseApiLogging();
     app.UseCustomExceptionHandler();
     return app;
   }

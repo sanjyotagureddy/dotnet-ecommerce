@@ -8,13 +8,14 @@ Fixes # (issue)
 
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
+- [ ] Enhancement (improvement to an existing feature)
 - [ ] Refactor (non-breaking change which refactors functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 - [ ] This change requires a documentation update
 
 ## Commit Message Checklist
 
-- [ ] Commit messages follow the [git message nomanclature](https://github.com/sanjyotagureddy/dotnet-ecommerce/blob/master/GitCommit_Nomanclature.md) (e.g., `MAJOR:`, `MINOR:`, `feat:`, `fix:`, etc.)
+- [ ] Commit messages follow the [git message nomenclature](https://github.com/sanjyotagureddy/dotnet-ecommerce/blob/master/GitCommit_Nomanclature.md) (e.g., `MAJOR:`, `MINOR:`, `feat:`, `fix:`, etc.)
 - [ ] Commit messages accurately describe the changes made
 - [ ] Commit messages are properly formatted (no special characters that violate the conventions)
 
