@@ -15,17 +15,17 @@ Fixes # (issue)
 
 ## Commit Message Checklist
 
-- [x] Commit messages follow the [git message nomenclature](https://github.com/sanjyotagureddy/dotnet-ecommerce/blob/master/GitCommit_Nomanclature.md) (e.g., `MAJOR:`, `MINOR:`, `feat:`, `fix:`, etc.)
-- [x] Commit messages accurately describe the changes made
+- [ ] Commit messages follow the [git message nomenclature](https://github.com/sanjyotagureddy/dotnet-ecommerce/blob/master/GitCommit_Nomanclature.md) (e.g., `MAJOR:`, `MINOR:`, `feat:`, `fix:`, etc.)
+- [ ] Commit messages accurately describe the changes made
 - [ ] Commit messages are properly formatted (no special characters that violate the conventions)
 
 # Checklist:
 
-- [x] My code follows the style guidelines of this project
-- [x] I have performed a self-review of my code
-- [x] I have commented my code, particularly in hard-to-understand areas
+- [ ] My code follows the style guidelines of this project
+- [ ] I have performed a self-review of my code
+- [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to the documentation
 - [ ] My changes generate no new warnings
 - [ ] I have added tests that prove my fix is effective or that my feature works
-- [x] New and existing unit tests pass locally with my changes
+- [ ] New and existing unit tests pass locally with my changes
 - [ ] Any dependent changes have been merged and published in downstream modules
