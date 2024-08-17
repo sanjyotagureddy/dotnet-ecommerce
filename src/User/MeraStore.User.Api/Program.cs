@@ -25,6 +25,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddElasticsearch(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();

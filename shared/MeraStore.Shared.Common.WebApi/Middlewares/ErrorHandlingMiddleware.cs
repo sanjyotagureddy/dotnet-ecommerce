@@ -1,83 +1,88 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using MeraStore.Shared.Common.Logging.Exceptions;
+﻿using MeraStore.Shared.Common.Logging.Exceptions;
 using MeraStore.Shared.Common.Logging.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 
-namespace MeraStore.Shared.Common.WebApi.Middlewares;
-
-public class ErrorHandlingMiddleware(RequestDelegate next)
+namespace MeraStore.Shared.Common.WebApi.Middlewares
 {
+  public class ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
+  {
     private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
     {
-        NullValueHandling = NullValueHandling.Ignore // Ignore null values
+      NullValueHandling = NullValueHandling.Ignore // Ignore null values
     };
 
     public async Task InvokeAsync(HttpContext context)
     {
-        try
-        {
-            await next(context);
-        }
-        catch (FluentValidation.ValidationException ex)
-        {
-            await HandleValidationExceptionAsync(context, ex);
-        }
-        catch (BaseAppException ex)
-        {
-            await HandleExceptionAsync(context, ex);
-        }
-        catch (Exception ex)
-        {
-            var wrappedException = new BaseAppException("GEN", GetRequestEventCode(context), "500", $"An unexpected error occurred. Exception message: {ex.Message}. | Exception stack: {ex?.InnerException?.ToString()}");
-            await HandleExceptionAsync(context, wrappedException);
-        }
+      try
+      {
+        await next(context);
+      }
+      catch (FluentValidation.ValidationException ex)
+      {
+        await HandleValidationExceptionAsync(context, ex);
+      }
+      catch (BaseAppException ex)
+      {
+        // Handle application exceptions without logging here
+        await HandleExceptionAsync(context, ex);
+      }
+      catch (Exception ex)
+      {
+        var wrappedException = new BaseAppException("GEN", GetRequestEventCode(context), "500",
+            $"An unexpected error occurred. Exception message: {ex.Message}. | Exception stack: {ex?.InnerException?.ToString()}");
+
+        // Handle unexpected exceptions without logging here
+        await HandleExceptionAsync(context, wrappedException);
+      }
     }
 
-    private Task HandleValidationExceptionAsync(HttpContext context, FluentValidation.ValidationException exception)
+    private async Task HandleValidationExceptionAsync(HttpContext context, FluentValidation.ValidationException exception)
     {
-        context.Response.ContentType = "application/problem+json";
-        context.Response.StatusCode = 400; // Bad Request for validation errors
+      // Log the validation exception details immediately
+      logger.LogError(exception, "Validation error occurred with details: {@ValidationErrors}",
+          exception.Errors.GroupBy(x => x.PropertyName)
+                  .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray()));
 
-        var validationErrors = exception.Errors
-            .GroupBy(x => x.PropertyName)
-            .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+      context.Response.ContentType = "application/problem+json";
+      context.Response.StatusCode = 400; // Bad Request for validation errors
 
-        var problemDetails = new ValidationProblemDetails(validationErrors)
-        {
-            Type = GetRequestEventCode(context),
-            Status = context.Response.StatusCode,
-            Title = "One or more validation errors occurred.",
-            Instance = context.TraceIdentifier
-        };
-        var options = new JsonSerializerOptions
-        {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-        };
-        return context.Response.WriteAsync(JsonConvert.SerializeObject(problemDetails, _jsonSerializerSettings));
+      var validationErrors = exception.Errors
+          .GroupBy(x => x.PropertyName)
+          .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+
+      var problemDetails = new ValidationProblemDetails(validationErrors)
+      {
+        Type = GetRequestEventCode(context),
+        Status = context.Response.StatusCode,
+        Title = "One or more validation errors occurred.",
+        Instance = context.TraceIdentifier
+      };
+
+      await context.Response.WriteAsync(JsonConvert.SerializeObject(problemDetails, _jsonSerializerSettings));
     }
 
     private Task HandleExceptionAsync(HttpContext context, BaseAppException exception)
     {
-        context.Response.ContentType = "application/problem+json";
-        context.Response.StatusCode = 500; // Default to 500 for unexpected errors
+      context.Response.ContentType = "application/problem+json";
+      context.Response.StatusCode = 500; // Default to 500 for unexpected errors
 
-        var problemDetails = new ProblemDetails()
-        {
-            Status = context.Response.StatusCode,
-            Type = GetRequestEventCode(context),
-            Title = "An error occurred while processing your request.",
-            Detail = exception.Message,
-            Extensions =
-            {
-                ["errorCode"] = exception.FullErrorCode,
-                ["service"] = exception.ServiceIdentifier
-            }
-        };
+      var problemDetails = new ProblemDetails()
+      {
+        Status = context.Response.StatusCode,
+        Type = GetRequestEventCode(context),
+        Title = "An error occurred while processing your request.",
+        Detail = exception.Message,
+        Extensions =
+                {
+                    ["errorCode"] = exception.FullErrorCode,
+                    ["service"] = exception.ServiceIdentifier
+                }
+      };
 
-        return context.Response.WriteAsync(JsonConvert.SerializeObject(problemDetails, _jsonSerializerSettings));
+      return context.Response.WriteAsync(JsonConvert.SerializeObject(problemDetails, _jsonSerializerSettings));
     }
 
     /// <summary>
@@ -90,8 +95,9 @@ public class ErrorHandlingMiddleware(RequestDelegate next)
     /// <returns></returns>
     private string GetRequestEventCode(HttpContext context)
     {
-        Endpoint? endpoint = context.GetEndpoint();
-        string code = endpoint?.Metadata.GetMetadata<EventCodeAttribute>()?.EventCode ?? string.Empty;
-        return code;
+      Endpoint? endpoint = context.GetEndpoint();
+      string code = endpoint?.Metadata.GetMetadata<EventCodeAttribute>()?.EventCode ?? string.Empty;
+      return code;
     }
+  }
 }
