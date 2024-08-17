@@ -1,5 +1,7 @@
 ﻿using MeraStore.User.Shared.Common;
+
 using Microsoft.AspNetCore.Http;
+
 using Serilog.Context;
 
 namespace MeraStore.Shared.Common.WebApi.Middlewares;
@@ -18,9 +20,19 @@ public class CorrelationIdMiddleware(RequestDelegate next)
 
     // Push the Correlation ID to the Serilog log context
     using (LogContext.PushProperty("CorrelationId", correlationId))
-    {
-      // Continue processing the request
-      await next(context);
-    }
+
+      // Ensure the response headers collection is initialized and add the Correlation ID
+      context.Response.OnStarting(() =>
+      {
+        if (!context.Response.Headers.ContainsKey(Constants.Headers.CorrelationId))
+        {
+          context.Response.Headers.Add(Constants.Headers.CorrelationId, correlationId);
+        }
+        return Task.CompletedTask;
+      });
+
+    // Continue processing the request
+    await next(context);
+
   }
 }
