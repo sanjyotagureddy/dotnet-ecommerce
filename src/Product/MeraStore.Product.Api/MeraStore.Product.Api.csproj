@@ -10,12 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\aspire\dotnet-ecommerce.ServiceDefaults\dotnet-ecommerce.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\..\shared\MeraStore.Shared.Common.WebApi\MeraStore.Shared.Common.WebApi.csproj" />
     <ProjectReference Include="..\MeraStore.Product.Models\MeraStore.Product.Models.csproj" />
     <ProjectReference Include="..\MeraStore.Product.Service\MeraStore.Product.Services.csproj" />
   </ItemGroup>
