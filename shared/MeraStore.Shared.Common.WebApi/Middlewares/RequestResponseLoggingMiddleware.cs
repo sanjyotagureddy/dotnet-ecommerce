@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
+using MeraStore.Shared.Common.Logging.Masking;
 using MeraStore.Shared.Common.Logging.Models;
-using MeraStore.User.Shared.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Nest;
@@ -10,7 +10,7 @@ using Serilog.Context;
 
 namespace MeraStore.Shared.Common.WebApi.Middlewares;
 
-public class RequestResponseLoggingMiddleware(RequestDelegate next, IElasticClient elasticClient, IConfiguration configuration)
+public class RequestResponseLoggingMiddleware(RequestDelegate next, IElasticClient elasticClient, IConfiguration configuration, MaskingService maskingService)
 {
   public async Task Invoke(HttpContext context)
   {
@@ -24,10 +24,11 @@ public class RequestResponseLoggingMiddleware(RequestDelegate next, IElasticClie
       RequestHeaders = context.Request.Headers.ToDictionary(h => h.Key, h => h.Value.ToString())
     };
 
-    // Capture the request body
+    // Capture and mask request body
     var requestBody = await CaptureRequestBody(context);
-    payload.Request = requestBody;
-    payload.RequestBodyUrl = await IndexDocumentAndGetUrl(requestBody, "request");
+    var maskedRequestBody = maskingService.MaskSensitiveData(requestBody);
+    payload.Request = maskedRequestBody;
+    payload.RequestBodyUrl = await IndexDocumentAndGetUrl(maskedRequestBody, "request");
 
     // Capture the original response stream
     var originalBodyStream = context.Response.Body;
@@ -39,34 +40,19 @@ public class RequestResponseLoggingMiddleware(RequestDelegate next, IElasticClie
       // Call the next middleware in the pipeline
       await next(context);
 
-      // Stop the stopwatch to calculate time taken in seconds with millisecond precision
       stopwatch.Stop();
       payload.TimeTakenSec = stopwatch.Elapsed.TotalSeconds;
-
-      // Capture the response details
       payload.StatusCode = context.Response.StatusCode;
       payload.ResponseHeaders = context.Response.Headers.ToDictionary(h => h.Key, h => h.Value.ToString());
 
-      // Capture the response body
+      // Capture and mask response body
       var responseBodyContent = await CaptureResponseBody(context);
-      payload.Response = responseBodyContent;
-      payload.ResponseBodyUrl = await IndexDocumentAndGetUrl(responseBodyContent, "response");
+      var maskedResponseBody = maskingService.MaskSensitiveData(responseBodyContent);
+      payload.Response = maskedResponseBody;
+      payload.ResponseBodyUrl = await IndexDocumentAndGetUrl(maskedResponseBody, "response");
 
-      // Log the payload with URLs to the request/response contents
-      using (LogContext.PushProperty("Method", payload.Method))
-      using (LogContext.PushProperty("Url", payload.Url))
-      using (LogContext.PushProperty("Path", payload.Path))
-      using (LogContext.PushProperty("RequestHeaders", payload.RequestHeaders))
-      using (LogContext.PushProperty("request", payload.Request))
-      using (LogContext.PushProperty("RequestBodyUrl", payload.RequestBodyUrl))
-      using (LogContext.PushProperty("ResponseHeaders", payload.ResponseHeaders))
-      using (LogContext.PushProperty("response", payload.Response))
-      using (LogContext.PushProperty("ResponseBodyUrl", payload.ResponseBodyUrl))
-      using (LogContext.PushProperty("StatusCode", payload.StatusCode))
-      using (LogContext.PushProperty("TimeTakenSec", payload.TimeTakenSec))
-      {
-        Log.Information("HTTP Request and Response logged with Elasticsearch URLs: {@Payload}", payload);
-      }
+      // Log the payload
+      LogPayload(payload);
 
       // Copy the response body back to the original stream
       await responseBody.CopyToAsync(originalBodyStream);
@@ -102,7 +88,7 @@ public class RequestResponseLoggingMiddleware(RequestDelegate next, IElasticClie
       Content = content
     };
 
-    var response = await elasticClient.IndexAsync(document, idx => idx.Index(Constants.SerilogIndex.RequestResponse));
+    var response = await elasticClient.IndexAsync(document, idx => idx.Index("request-response-logs"));
 
     if (!response.IsValid)
     {
@@ -111,8 +97,26 @@ public class RequestResponseLoggingMiddleware(RequestDelegate next, IElasticClie
 
     var elasticUrl = configuration["ElasticConfiguration:Uri"];
     // Construct the URL to view only the 'content' field of the document
-    string documentUrl = $"{elasticUrl}request-response-logs/_doc/{response.Id}?_source=content"; // Adjust the URL as needed
+    var documentUrl = $"{elasticUrl}request-response-logs/_doc/{response.Id}?_source=content"; // Adjust the URL as needed
 
     return documentUrl;
+  }
+
+  private void LogPayload(Payload payload)
+  {
+    using (LogContext.PushProperty("Method", payload.Method))
+    using (LogContext.PushProperty("Url", payload.Url))
+    using (LogContext.PushProperty("Path", payload.Path))
+    using (LogContext.PushProperty("RequestHeaders", payload.RequestHeaders))
+    using (LogContext.PushProperty("Request", payload.Request))
+    using (LogContext.PushProperty("RequestBodyUrl", payload.RequestBodyUrl))
+    using (LogContext.PushProperty("ResponseHeaders", payload.ResponseHeaders))
+    using (LogContext.PushProperty("Response", payload.Response))
+    using (LogContext.PushProperty("ResponseBodyUrl", payload.ResponseBodyUrl))
+    using (LogContext.PushProperty("StatusCode", payload.StatusCode))
+    using (LogContext.PushProperty("TimeTakenSec", payload.TimeTakenSec))
+    {
+      Log.Information("HTTP Request and Response logged with Elasticsearch URLs: {@Payload}", payload);
+    }
   }
 }

@@ -24,6 +24,7 @@ public static class AppExtensions
 
   public static IApplicationBuilder UseCommonMiddlewares(this IApplicationBuilder app)
   {
+    app.UseCustomExceptionHandler();
     app.UseCorrelationId();
     app.UseApiLogging();
     app.UseCustomExceptionHandler();

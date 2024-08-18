@@ -81,7 +81,7 @@ namespace MeraStore.Shared.Common.WebApi.Middlewares
                     ["service"] = exception.ServiceIdentifier
                 }
       };
-
+      logger.LogError(exception, exception.Message);
       return context.Response.WriteAsync(JsonConvert.SerializeObject(problemDetails, _jsonSerializerSettings));
     }
 
@@ -95,8 +95,8 @@ namespace MeraStore.Shared.Common.WebApi.Middlewares
     /// <returns></returns>
     private string GetRequestEventCode(HttpContext context)
     {
-      Endpoint? endpoint = context.GetEndpoint();
-      string code = endpoint?.Metadata.GetMetadata<EventCodeAttribute>()?.EventCode ?? string.Empty;
+      var endpoint = context.GetEndpoint();
+      var code = endpoint?.Metadata.GetMetadata<EventCodeAttribute>()?.EventCode ?? string.Empty;
       return code;
     }
   }

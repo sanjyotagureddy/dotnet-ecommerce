@@ -1,7 +1,5 @@
 ﻿using MeraStore.User.Shared.Common;
-
 using Microsoft.AspNetCore.Http;
-
 using Serilog.Context;
 
 namespace MeraStore.Shared.Common.WebApi.Middlewares;
@@ -26,7 +24,7 @@ public class CorrelationIdMiddleware(RequestDelegate next)
       {
         if (!context.Response.Headers.ContainsKey(Constants.Headers.CorrelationId))
         {
-          context.Response.Headers.Add(Constants.Headers.CorrelationId, correlationId);
+          context.Response.Headers.Append(Constants.Headers.CorrelationId, correlationId);
         }
         return Task.CompletedTask;
       });
