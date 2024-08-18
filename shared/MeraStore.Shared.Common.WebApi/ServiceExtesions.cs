@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 
 using MeraStore.Shared.Common.Logging;
+using MeraStore.Shared.Common.Logging.Masking;
 using MeraStore.Shared.Common.WebApi.Filters;
 
 using Microsoft.AspNetCore.Builder;
@@ -29,6 +30,7 @@ public static class ServiceExtensions
     {
       sg.OperationFilter<CustomHeadersFilter>();
     });
+    services.AddSingleton<MaskingService>();
     services.AddElasticsearch(configuration);
     services.AddHttpContextAccessor();
     services.AddResponseCompression();
