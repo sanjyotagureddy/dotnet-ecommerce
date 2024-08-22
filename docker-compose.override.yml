@@ -47,7 +47,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:OrderingConnectionString=Server=database;Database=UserDb;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True"
-      - "ElasticConfiguration:Uri=Server=http://elasticsearch"
+      - "ElasticConfiguration:Uri=http://elasticsearch:9200"
       - ASPNETCORE_URLS=http://+:8001
     ports:
       - "8001:8001"
@@ -60,7 +60,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:OrderingConnectionString=Server=database;Database=ProductDb;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True"
-      - "ElasticConfiguration:Uri=Server=http://elasticsearch"
+      - "ElasticConfiguration:Uri=http://elasticsearch:9200"
       - ASPNETCORE_URLS=http://+:8002
     ports:
       - "8002:8002"
