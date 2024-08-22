@@ -97,7 +97,7 @@ public class RequestResponseLoggingMiddleware(RequestDelegate next, IElasticClie
 
     var elasticUrl = configuration["ElasticConfiguration:Uri"];
     // Construct the URL to view only the 'content' field of the document
-    var documentUrl = $"{elasticUrl}request-response-logs/_doc/{response.Id}?_source=content"; // Adjust the URL as needed
+    var documentUrl = $"{elasticUrl}/request-response-logs/_doc/{response.Id}?_source=content"; // Adjust the URL as needed
 
     return documentUrl;
   }

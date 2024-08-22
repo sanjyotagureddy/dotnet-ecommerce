@@ -8,10 +8,10 @@ services:
     ports:
       - "1433:1433"
 
-  elasticsearch:
-    container_name: elasticsearch
+  elastic.search:
+    container_name: elastic.search
     environment:
-      - node.name=elasticsearch
+      - node.name=elastic.search
       - cluster.name=es-docker-cluster
       - xpack.security.enabled=false
       - "discovery.type=single-node"
@@ -31,12 +31,12 @@ services:
   kibana:
     container_name: kibana
     environment:
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_URL=http://elastic.search:9200
+      - ELASTICSEARCH_HOSTS=http://elastic.search:9200
     networks:
       - msec-net
     depends_on:
-      - elasticsearch
+      - elastic.search
     ports:
       - "5601:5601"
     volumes:
@@ -47,10 +47,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:OrderingConnectionString=Server=database;Database=UserDb;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True"
-      - "ElasticConfiguration:Uri=http://elasticsearch:9200"
+      - "ElasticConfiguration:Uri=http://host.docker.internal:9200"
       - ASPNETCORE_URLS=http://+:8001
     ports:
       - "8001:8001"
+    networks:
+      - msec-net
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
@@ -60,10 +62,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:OrderingConnectionString=Server=database;Database=ProductDb;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True"
-      - "ElasticConfiguration:Uri=http://elasticsearch:9200"
+      - ElasticConfiguration__Uri=http://host.docker.internal:9200
       - ASPNETCORE_URLS=http://+:8002
     ports:
       - "8002:8002"
+    networks:
+      - msec-net
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

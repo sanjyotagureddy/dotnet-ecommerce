@@ -20,7 +20,6 @@ public class WeatherForecastController(ILogger<WeatherForecastController> logger
     ProductValidator validator = new ProductValidator();
 
     validator.ValidateAndThrow(product);
-    _logger.LogInformation("Product received: {@product}", product);
     return Ok(product);
   }
 }
