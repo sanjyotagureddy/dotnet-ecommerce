@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using Serilog.Context;
+using MeraStore.Shared.Common.Logging.Models;
+using MeraStore.User.Shared.Common.Errors;
 
 namespace MeraStore.Shared.Common.WebApi.Middlewares
 {
@@ -26,15 +29,13 @@ namespace MeraStore.Shared.Common.WebApi.Middlewares
       }
       catch (BaseAppException ex)
       {
-        // Handle application exceptions without logging here
         await HandleExceptionAsync(context, ex);
       }
       catch (Exception ex)
       {
-        var wrappedException = new BaseAppException("GEN", GetRequestEventCode(context), "500",
-            $"An unexpected error occurred. Exception message: {ex.Message}. | Exception stack: {ex?.InnerException?.ToString()}");
+        var wrappedException = new BaseAppException("GEN", GetRequestEventCode(context), "500", ex);
 
-        // Handle unexpected exceptions without logging here
+        // Handle unexpected exceptions with logging
         await HandleExceptionAsync(context, wrappedException);
       }
     }
@@ -60,7 +61,7 @@ namespace MeraStore.Shared.Common.WebApi.Middlewares
         Title = "One or more validation errors occurred.",
         Instance = context.TraceIdentifier
       };
-
+      LogContext.PushProperty("StatusCode", context.Response.StatusCode);
       await context.Response.WriteAsync(JsonConvert.SerializeObject(problemDetails, _jsonSerializerSettings));
     }
 
@@ -81,7 +82,9 @@ namespace MeraStore.Shared.Common.WebApi.Middlewares
                     ["service"] = exception.ServiceIdentifier
                 }
       };
+
       logger.LogError(exception, exception.Message);
+      LogContext.PushProperty("StatusCode", context.Response.StatusCode);
       return context.Response.WriteAsync(JsonConvert.SerializeObject(problemDetails, _jsonSerializerSettings));
     }
 
