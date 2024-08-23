@@ -1,5 +1,5 @@
-﻿using MeraStore.Shared.Common.Logging.Exceptions;
-using MeraStore.Shared.Common.Logging.Attributes;
+﻿using MeraStore.Shared.Common.Logging.Attributes;
+using MeraStore.User.Shared.Common.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
