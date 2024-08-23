@@ -1,11 +1,9 @@
-﻿using System;
+﻿using MeraStore.Shared.Common.Logging.Enrichers;
 using MeraStore.User.Shared.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
 using Nest;
-
 using Serilog;
 using Serilog.Filters;
 using Serilog.Sinks.Elasticsearch;
@@ -41,6 +39,9 @@ namespace MeraStore.Shared.Common.Logging
           .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName ?? "Development")
           .Enrich.WithAssemblyName()
           .Enrich.WithMachineName()
+          .Enrich.WithProcessId()
+          .Enrich.WithThreadId()
+          .Enrich.With(new IpAddressEnricher())
           .WriteTo.Console(
             outputTemplate:
             $"[{{SourceContext}}-{appName}-{{MachineName}}]{{NewLine}}{{Timestamp:ddMMyyyy HH:mm:ss}} {{Level:u4}}] {{Message:lj}}{{NewLine}}{{Exception}}");
