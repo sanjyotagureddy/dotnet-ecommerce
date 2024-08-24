@@ -49,7 +49,7 @@ jobs:
 
       - name: Build and analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
@@ -60,12 +60,19 @@ jobs:
           dotnet restore dotnet-ecommerce.sln
           dotnet build dotnet-ecommerce.sln --no-restore
 
-          # Run tests and collect coverage
+          # Run tests and collect coverage for all test projects
           dotnet test dotnet-ecommerce.sln --no-build --collect:"XPlat Code Coverage"
 
-          # Convert coverage report to LCOV format
+          # Install Coverlet
           dotnet tool install --global coverlet.console
-          coverlet ./bin/Debug/net6.0/YourTestProject.dll --target "dotnet" --targetargs "test --no-build" --format "lcov" --output "coverage.lcov"
+
+          # Generate LCOV report using coverlet for all test DLLs
+          $testDlls = Get-ChildItem -Path .\bin\Debug\net8.0 -Filter *.dll -Recurse | Where-Object { $_.Name -like '*Tests.dll' }
+
+          # Run coverlet for each test DLL
+          foreach ($dll in $testDlls) {
+            coverlet $dll.FullName --target "dotnet" --targetargs "test --no-build" --format "lcov" --output "coverage.lcov"
+          }
 
           # End SonarCloud analysis
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
