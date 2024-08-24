@@ -1,6 +1,5 @@
 using FluentValidation;
 using MeraStore.Shared.Common.Logging.Attributes;
-using MeraStore.User.Shared.Common.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeraStore.User.Api.Controllers;

@@ -1,7 +1,5 @@
 ﻿using System.Net;
 
-using static MeraStore.User.Shared.Common.Constants;
-
 namespace MeraStore.User.Shared.Common.Exceptions;
 
 [ExcludeFromCodeCoverage]

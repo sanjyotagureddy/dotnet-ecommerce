@@ -1,8 +1,6 @@
 ﻿using System.Net;
 using MeraStore.User.Shared.Common.ErrorsCodes;
 
-using static MeraStore.User.Shared.Common.Constants;
-
 namespace MeraStore.User.Shared.Common.Exceptions;
 
 public class UserServiceExceptions
