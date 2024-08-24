@@ -5,11 +5,21 @@ namespace MeraStore.User.Shared.Common.Exceptions;
 
 public class CommonExceptions
 {
-  public class ApiCommunicationException(string message) : BaseAppException(
-    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.ApiGateway),
-    EventCodeProvider.GetEventCode(Constants.EventCodes.ServiceError),
-    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.BadGatewayError),
-    HttpStatusCode.BadGateway, message);
+  public class ApiCommunicationException : BaseAppException
+  {
+    public ApiCommunicationException(string message) : base(ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.ApiGateway),
+      EventCodeProvider.GetEventCode(Constants.EventCodes.ServiceError),
+      ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.BadGatewayError),
+      HttpStatusCode.BadGateway, message)
+    {
+    }
+    public ApiCommunicationException(string message, Exception innerException) : base(ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.ApiGateway),
+      EventCodeProvider.GetEventCode(Constants.EventCodes.ServiceError),
+      ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.BadGatewayError),
+      HttpStatusCode.BadGateway, message)
+    {
+    }
+  }
 
   public class EventBusCommunicationException(string message) : BaseAppException(
     ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.EventBus),

@@ -21,6 +21,9 @@ public static class ErrorCodes
         { Constants.ErrorCodes.TooManyRequestsError, "429" },
         { Constants.ErrorCodes.UnauthorizedError, "401" },
         { Constants.ErrorCodes.UnprocessableEntityError, "422" },
-        { Constants.ErrorCodes.ValidationError, "433" }
+        { Constants.ErrorCodes.ValidationError, "433" },
+        { Constants.ErrorCodes.HttpRequestError, "437" },
+        { Constants.ErrorCodes.MissingUriError, "438" },
+        { Constants.ErrorCodes.MissingHttpMethodError, "439" }
     };
 }
