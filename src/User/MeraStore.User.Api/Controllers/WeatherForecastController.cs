@@ -7,6 +7,7 @@ namespace MeraStore.User.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[EventCode("1xx")]
 
 public class WeatherForecastController(ILogger<WeatherForecastController> logger) : ControllerBase
 {
@@ -21,8 +22,7 @@ public class WeatherForecastController(ILogger<WeatherForecastController> logger
   [HttpPost(Name = "GetWeatherForecast")]
   public IActionResult Post([FromBody] Product product)
   {
-    throw new UserServiceExceptions.UserNotFoundException("Sanjyot not found");
-    ProductValidator validator = new ProductValidator();
+    var validator = new ProductValidator();
 
     validator.ValidateAndThrow(product);
     return Ok(product);
