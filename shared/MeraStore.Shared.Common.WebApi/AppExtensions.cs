@@ -1,8 +1,10 @@
 ﻿using MeraStore.Shared.Common.WebApi.Middlewares;
 using Microsoft.AspNetCore.Builder;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MeraStore.Shared.Common.WebApi;
 
+[ExcludeFromCodeCoverage]
 public static class AppExtensions
 {
   public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder app)

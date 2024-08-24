@@ -1,4 +1,5 @@
-﻿using MeraStore.Shared.Common.Logging.Enrichers;
+﻿using System.Diagnostics.CodeAnalysis;
+using MeraStore.Shared.Common.Logging.Enrichers;
 using MeraStore.User.Shared.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +11,7 @@ using Serilog.Sinks.Elasticsearch;
 
 namespace MeraStore.Shared.Common.Logging
 {
+  [ExcludeFromCodeCoverage]
   public static class LoggingExtension
   {
     public static IServiceCollection AddElasticsearch(this IServiceCollection services, IConfiguration configuration)
@@ -17,6 +19,9 @@ namespace MeraStore.Shared.Common.Logging
       var elasticUri = configuration["ElasticConfiguration:Uri"]!;
       var settings = new ConnectionSettings(new Uri(elasticUri))
         .DefaultIndex(Constants.SerilogIndex.RequestResponse);
+
+      var maskingConfig = new Dictionary<string, List<string>>();
+      configuration.GetSection("MaskingConfig").Bind(maskingConfig);
 
       var elasticClient = new ElasticClient(settings);
       services.AddSingleton<IElasticClient>(elasticClient);

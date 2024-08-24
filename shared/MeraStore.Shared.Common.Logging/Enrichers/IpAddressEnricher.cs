@@ -1,10 +1,12 @@
-﻿using System.Net;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using System.Net.Sockets;
 using Serilog.Core;
 using Serilog.Events;
 
 namespace MeraStore.Shared.Common.Logging.Enrichers;
 
+[ExcludeFromCodeCoverage]
 public class IpAddressEnricher() : ILogEventEnricher
 {
   private string _ipAddress;

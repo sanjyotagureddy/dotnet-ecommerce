@@ -1,10 +1,9 @@
 ﻿using MeraStore.Shared.Common.Logging.Masking.Strategies;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 
 namespace MeraStore.Shared.Common.Logging.Masking;
 
-public class MaskingService(IConfiguration configuration)
+public class MaskingService(Dictionary<string, List<string>> fieldStrategyMap)
 {
   private readonly Dictionary<string, IMaskingStrategy> _strategies = new()
   {
@@ -13,7 +12,6 @@ public class MaskingService(IConfiguration configuration)
     { "PhoneNumber", new PhoneNumberMaskingStrategy() },
     { "Default", new DefaultMaskingStrategy() }
   };
-  private readonly Dictionary<string, List<string>> _fieldStrategyMap = configuration.GetSection("MaskingConfig").Get<Dictionary<string, List<string>>>();
 
   public string MaskSensitiveData(string jsonContent)
   {
@@ -21,12 +19,12 @@ public class MaskingService(IConfiguration configuration)
 
     var jsonObject = JObject.Parse(jsonContent);
 
-    foreach (var strategyEntry in _fieldStrategyMap)
+    foreach (var strategyEntry in fieldStrategyMap)
     {
       var strategyName = strategyEntry.Key;
       var fields = strategyEntry.Value;
 
-      if (!_strategies.ContainsKey(strategyName)) continue;
+      if (!_strategies.TryGetValue(strategyName, out var strategy)) continue;
 
       foreach (var fieldPath in fields)
       {
@@ -36,7 +34,7 @@ public class MaskingService(IConfiguration configuration)
           if (token.Type == JTokenType.String)
           {
             var originalValue = token.ToString();
-            var maskedValue = _strategies[strategyName].Mask(originalValue);
+            var maskedValue = strategy.Mask(originalValue);
             token.Replace(maskedValue);
           }
         }
