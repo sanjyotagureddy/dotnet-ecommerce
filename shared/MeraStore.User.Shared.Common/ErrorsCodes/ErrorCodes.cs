@@ -1,6 +1,4 @@
-﻿using static MeraStore.User.Shared.Common.Constants;
-
-namespace MeraStore.User.Shared.Common.ErrorsCodes;
+﻿namespace MeraStore.User.Shared.Common.ErrorsCodes;
 
 public static class ErrorCodes
 {
