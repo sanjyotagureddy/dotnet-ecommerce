@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 using MeraStore.Shared.Common.Logging;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace MeraStore.Shared.Common.WebApi;
 
 
+[ExcludeFromCodeCoverage]
 public static class ServiceExtensions
 {
   public static IServiceCollection AddDefaultServices(this IServiceCollection services, IConfiguration configuration)

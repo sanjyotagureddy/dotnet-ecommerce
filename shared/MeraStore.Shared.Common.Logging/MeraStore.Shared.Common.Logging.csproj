@@ -22,6 +22,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <SonarQubeSetting Include="sonar.cpd.exclusions">
+      <Value>**/PhoneNumberMaskingStrategy.cs</Value>
+    </SonarQubeSetting>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MeraStore.User.Shared.Common\MeraStore.User.Shared.Common.csproj" />
   </ItemGroup>
 
