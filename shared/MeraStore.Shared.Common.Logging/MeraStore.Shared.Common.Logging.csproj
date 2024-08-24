@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <SonarQubeSetting Include="sonar.coverage.exclusions">
+    <SonarQubeSetting Include="sonar.cpd.exclusions">
       <Value>**/PhoneNumberMaskingStrategy.cs</Value>
     </SonarQubeSetting>
   </ItemGroup>
