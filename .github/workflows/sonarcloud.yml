@@ -62,7 +62,9 @@ jobs:
 
           # Run tests and collect coverage
           dotnet test dotnet-ecommerce.sln --no-build --collect:"XPlat Code Coverage"
-          # Convert the coverage report to LCOV format
+
+          # Convert coverage report to LCOV format
+          dotnet tool install --global coverlet.console
           coverlet ./bin/Debug/net6.0/YourTestProject.dll --target "dotnet" --targetargs "test --no-build" --format "lcov" --output "coverage.lcov"
 
           # End SonarCloud analysis
