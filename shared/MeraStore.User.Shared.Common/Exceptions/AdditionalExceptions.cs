@@ -1,43 +1,79 @@
-﻿using MeraStore.User.Shared.Common.Errors;
+﻿using System.Net;
+using MeraStore.User.Shared.Common.ErrorsCodes;
 
 namespace MeraStore.User.Shared.Common.Exceptions;
 
-[ExcludeFromCodeCoverage]
 public class AdditionalExceptions
 {
-  public class ServiceTimeoutException(string message) : BaseAppException(ServiceIdentifiers.ApiGateway,
-    EventCodes.Timeout, ErrorCodes.BadGatewayError, message);
+  public class ServiceTimeoutException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.ApiGateway),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.Timeout),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.BadGatewayError),
+    HttpStatusCode.GatewayTimeout, message);
 
-  public class ServiceUnavailableException(string message) : BaseAppException(ServiceIdentifiers.ApiGateway,
-    EventCodes.ServiceUnavailable, ErrorCodes.ServiceUnavailableError, message);
+  public class ServiceUnavailableException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.ApiGateway),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.ServiceUnavailable),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.ServiceUnavailableError),
+    HttpStatusCode.ServiceUnavailable, message);
 
-  public class DuplicateRecordException(string message) : BaseAppException(ServiceIdentifiers.Database,
-    EventCodes.ResourceConflict, ErrorCodes.ConflictError, message);
+  public class DuplicateRecordException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.Database),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.ResourceConflict),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.ConflictError),
+    HttpStatusCode.Conflict, message);
 
-  public class InvalidDataFormatException(string message) : BaseAppException(ServiceIdentifiers.DataValidation,
-    EventCodes.InvalidParameter, ErrorCodes.InvalidFormatError, message);
+  public class InvalidDataFormatException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.DataValidation),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.InvalidParameter),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.InvalidFormatError),
+    HttpStatusCode.BadRequest, message);
 
-  public class MissingConfigurationException(string message) : BaseAppException(ServiceIdentifiers.Configuration,
-    EventCodes.ResourceNotFound, ErrorCodes.MissingFieldError, message);
+  public class MissingConfigurationException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.Configuration),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.ResourceNotFound),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.MissingFieldError),
+    HttpStatusCode.NotFound, message);
 
   public class InvalidEnvironmentConfigurationException(string message) : BaseAppException(
-    ServiceIdentifiers.Configuration, EventCodes.InvalidRequest, ErrorCodes.InvalidFieldError, message);
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.Configuration),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.InvalidRequest),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.InvalidFieldError),
+    HttpStatusCode.BadRequest, message);
 
-  public class ApiKeyMissingException(string message) : BaseAppException(ServiceIdentifiers.Security,
-    EventCodes.ApiKeyMissing, ErrorCodes.UnauthorizedError, message);
+  public class ApiKeyMissingException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.Security),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.ApiKeyMissing),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.UnauthorizedError),
+    HttpStatusCode.Unauthorized, message);
 
-  public class TokenExpiredException(string message) : BaseAppException(ServiceIdentifiers.Security,
-    EventCodes.TokenExpired, ErrorCodes.UnauthorizedError, message);
+  public class TokenExpiredException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.Security),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.TokenExpired),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.UnauthorizedError),
+    HttpStatusCode.Unauthorized, message);
 
-  public class FeatureNotSupportedException(string message) : BaseAppException(ServiceIdentifiers.Operational,
-    EventCodes.FeatureNotSupported, ErrorCodes.NotImplementedError, message);
+  public class FeatureNotSupportedException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.Operational),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.FeatureNotSupported),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.NotImplementedError),
+    HttpStatusCode.NotImplemented, message);
 
-  public class ServiceLimitExceededException(string message) : BaseAppException(ServiceIdentifiers.Operational,
-    EventCodes.RateLimitExceeded, ErrorCodes.TooManyRequestsError, message);
+  public class ServiceLimitExceededException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.Operational),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.RateLimitExceeded),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.TooManyRequestsError),
+    HttpStatusCode.TooManyRequests, message);
 
-  public class NetworkFailureException(string message) : BaseAppException(ServiceIdentifiers.Network,
-    EventCodes.NetworkError, ErrorCodes.BadGatewayError, message);
+  public class NetworkFailureException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.Network),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.NetworkError),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.BadGatewayError),
+    HttpStatusCode.BadGateway, message);
 
-  public class ConnectionRefusedException(string message) : BaseAppException(ServiceIdentifiers.Network,
-    EventCodes.NetworkError, ErrorCodes.BadGatewayError, message);
+  public class ConnectionRefusedException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.Network),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.NetworkError),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.BadGatewayError),
+    HttpStatusCode.BadGateway, message);
 }

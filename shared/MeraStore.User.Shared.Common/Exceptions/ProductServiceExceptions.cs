@@ -1,13 +1,25 @@
-﻿using MeraStore.User.Shared.Common.Errors;
+﻿using System.Net;
+using MeraStore.User.Shared.Common.ErrorsCodes;
 
 namespace MeraStore.User.Shared.Common.Exceptions;
 
-[ExcludeFromCodeCoverage]
 public class ProductServiceExceptions
 {
-  public class ProductNotFoundException(string message) : BaseAppException(ServiceIdentifiers.ProductService,
-    EventCodes.ResourceNotFound, ErrorCodes.NotFoundError, message);
+  public class ProductNotFoundException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.ProductService),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.ResourceNotFound),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.NotFoundError),
+    HttpStatusCode.NotFound, message);
 
-  public class ProductOutOfStockException(string message) : BaseAppException(ServiceIdentifiers.ProductService,
-    EventCodes.InvalidRequest, ErrorCodes.BadRequestError, message);
+  public class ProductCreationException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.ProductService),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.InvalidRequest),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.InvalidFieldError),
+    HttpStatusCode.BadRequest, message);
+
+  public class ProductUpdateException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.ProductService),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.InvalidRequest),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.InvalidFieldError),
+    HttpStatusCode.BadRequest, message);
 }

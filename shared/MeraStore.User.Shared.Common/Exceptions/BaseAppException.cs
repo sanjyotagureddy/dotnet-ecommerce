@@ -1,4 +1,8 @@
-﻿namespace MeraStore.User.Shared.Common.Exceptions;
+﻿using System.Net;
+
+using static MeraStore.User.Shared.Common.Constants;
+
+namespace MeraStore.User.Shared.Common.Exceptions;
 
 [ExcludeFromCodeCoverage]
 public class BaseAppException : Exception
@@ -6,23 +10,22 @@ public class BaseAppException : Exception
   public string EventCode { get; }
   public string ServiceIdentifier { get; }
   public string ErrorCode { get; }
-
-  public string FullErrorCode => $"{ServiceIdentifier}-{ErrorCode}";
-
-  public BaseAppException(string serviceIdentifier, string eventCode, string errorCode, string message)
+  public HttpStatusCode StatusCode { get; }
+  public string FullErrorCode => $"{ServiceIdentifier}-{EventCode}-{ErrorCode}";
+  public BaseAppException(string serviceIdentifier, string eventCode, string errorCode, HttpStatusCode statusCode, string message)
     : base(message)
   {
     ServiceIdentifier = serviceIdentifier;
     EventCode = eventCode;
+    StatusCode = statusCode;
     ErrorCode = errorCode;
   }
-
-  // Additional constructor for wrapping generic exceptions
-  public BaseAppException(string serviceIdentifier, string eventCode, string errorCode, Exception innerException)
+  public BaseAppException(string serviceIdentifier, string eventCode, string errorCode, HttpStatusCode statusCode, Exception innerException)
     : base(innerException?.Message, innerException)
   {
     ServiceIdentifier = serviceIdentifier;
     EventCode = eventCode;
+    StatusCode = statusCode;
     ErrorCode = errorCode;
   }
 }
