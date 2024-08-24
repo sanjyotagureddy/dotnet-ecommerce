@@ -1,3 +1,4 @@
+using MeraStore.Shared.Common.Http;
 using MeraStore.Shared.Common.Logging;
 using MeraStore.Shared.Common.WebApi;
 using MeraStore.User.Shared.Common;
@@ -11,6 +12,7 @@ builder.Host.UseLogging(Constants.ApplicationNames.User);
 // Add services to the container.
 
 builder.Services.AddDefaultServices(builder.Configuration);
+builder.Services.AddApiCallerServices(builder.Configuration);
 
 
 var app = builder.Build();

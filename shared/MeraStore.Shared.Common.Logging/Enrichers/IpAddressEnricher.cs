@@ -19,3 +19,15 @@ public class IpAddressEnricher() : ILogEventEnricher
     logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("IpAddress", _ipAddress));
   }
 }
+public class MethodEnricher(string method) : ILogEventEnricher
+{
+  private string _method;
+  public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
+  {
+    if (string.IsNullOrEmpty(_method))
+    {
+      _method = method ?? "";
+    }
+    logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("Method", _method));
+  }
+}

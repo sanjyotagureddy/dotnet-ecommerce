@@ -65,6 +65,7 @@ public static class Constants
     public const string InvalidOperation = "InvalidOperation";
     public const string OperationFailed = "OperationFailed";
     public const string SerializationError = "SerializationError";
+    public const string HttpRequestError = "HttpRequestError";
   }
 
   public static class ErrorCodes
@@ -87,6 +88,9 @@ public static class Constants
     public const string UnauthorizedError = "UnauthorizedError";
     public const string UnprocessableEntityError = "UnprocessableEntityError";
     public const string ValidationError = "ValidationError";
+    public const string HttpRequestError = "HttpRequestError";
+    public const string MissingUriError = "MissingUriError";
+    public const string MissingHttpMethodError = "MissingHttpMethodError";
   }
 
 }

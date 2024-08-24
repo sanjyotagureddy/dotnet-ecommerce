@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\aspire\dotnet-ecommerce.ServiceDefaults\dotnet-ecommerce.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\..\shared\MeraStore.Shared.Common.Http\MeraStore.Shared.Common.Http.csproj" />
     <ProjectReference Include="..\..\..\shared\MeraStore.Shared.Common.WebApi\MeraStore.Shared.Common.WebApi.csproj" />
   </ItemGroup>
 

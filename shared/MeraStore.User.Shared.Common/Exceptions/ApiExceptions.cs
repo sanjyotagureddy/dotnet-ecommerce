@@ -3,8 +3,21 @@ using MeraStore.User.Shared.Common.ErrorsCodes;
 
 namespace MeraStore.User.Shared.Common.Exceptions;
 
-public class AdditionalExceptions
+public class ApiExceptions
 {
+  public class HttpRequestBuilderException(string message)
+    : BaseAppException(ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.ApiGateway), EventCodeProvider.GetEventCode(Constants.EventCodes.HttpRequestError), 
+      ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.HttpRequestError), HttpStatusCode.BadRequest, message);
+  public class MissingUriException()
+    : BaseAppException(ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.ApiGateway), EventCodeProvider.GetEventCode(Constants.EventCodes.HttpRequestError),
+      ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.MissingUriError), HttpStatusCode.BadRequest,
+      "URI must be set before building the request.");
+
+  public class MissingMethodException()
+    : BaseAppException(ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.ApiGateway), EventCodeProvider.GetEventCode(Constants.EventCodes.HttpRequestError),
+      ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.MissingHttpMethodError), HttpStatusCode.BadRequest,
+      "HTTP method must be set before building the request.");
+
   public class ServiceTimeoutException(string message) : BaseAppException(
     ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.ApiGateway),
     EventCodeProvider.GetEventCode(Constants.EventCodes.Timeout),
