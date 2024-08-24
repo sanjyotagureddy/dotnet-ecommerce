@@ -53,9 +53,17 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"sanjyotagureddy_dotnet-ecommerce" /o:"sanjyotagureddy" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.language="cs" /d:sonar.inclusions="**/*.cs" /d:sonar.tests="**/*Tests.csproj" /d:sonar.test.inclusions="**/*Tests/**/*.cs" /d:sonar.scanner.scanAll=false
+          # Begin SonarCloud analysis
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"sanjyotagureddy_dotnet-ecommerce" /o:"sanjyotagureddy" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.language="cs" /d:sonar.inclusions="**/*.cs" /d:sonar.tests="**/*Tests.csproj" /d:sonar.test.inclusions="**/*Tests/**/*.cs" /d:sonar.coverage.exclusions="**/*Tests/**/*.cs" /d:sonar.coverage.lcov.reportPaths="coverage.lcov"
 
+          # Restore and build
           dotnet restore dotnet-ecommerce.sln
           dotnet build dotnet-ecommerce.sln --no-restore
 
+          # Run tests and collect coverage
+          dotnet test dotnet-ecommerce.sln --no-build --collect:"XPlat Code Coverage"
+          # Convert the coverage report to LCOV format
+          coverlet ./bin/Debug/net6.0/YourTestProject.dll --target "dotnet" --targetargs "test --no-build" --format "lcov" --output "coverage.lcov"
+
+          # End SonarCloud analysis
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
