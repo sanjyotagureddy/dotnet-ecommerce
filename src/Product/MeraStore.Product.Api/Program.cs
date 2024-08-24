@@ -5,7 +5,7 @@ using MeraStore.User.Shared.Common;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-builder.Host.UseLogging(Constants.ServiceIdentifiers.Product);
+builder.Host.UseLogging(Constants.ApplicationNames.Product);
 
 // Add services to the container.
 

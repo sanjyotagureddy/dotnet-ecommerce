@@ -1,13 +1,19 @@
-﻿using MeraStore.User.Shared.Common.Errors;
+﻿using System.Net;
+using MeraStore.User.Shared.Common.ErrorsCodes;
 
 namespace MeraStore.User.Shared.Common.Exceptions;
 
-[ExcludeFromCodeCoverage]
 public class InventoryServiceExceptions
 {
-  public class InventoryNotFoundException(string message) : BaseAppException(ServiceIdentifiers.InventoryService,
-    EventCodes.ResourceNotFound, ErrorCodes.NotFoundError, message);
+  public class OutOfStockException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.InventoryService),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.ResourceNotFound),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.NotFoundError),
+    HttpStatusCode.NotFound, message);
 
-  public class InsufficientInventoryException(string message) : BaseAppException(ServiceIdentifiers.InventoryService,
-    EventCodes.InvalidRequest, ErrorCodes.BadRequestError, message);
+  public class StockAdjustmentException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.InventoryService),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.ServiceError),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.UnprocessableEntityError),
+    HttpStatusCode.UnprocessableEntity, message);
 }

@@ -1,10 +1,14 @@
 using FluentValidation;
+using MeraStore.Shared.Common.Logging.Attributes;
+using MeraStore.User.Shared.Common.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeraStore.User.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[EventCode("1xx")]
+
 public class WeatherForecastController(ILogger<WeatherForecastController> logger) : ControllerBase
 {
   private static readonly string[] Summaries = new[]
@@ -14,10 +18,11 @@ public class WeatherForecastController(ILogger<WeatherForecastController> logger
 
   private readonly ILogger<WeatherForecastController> _logger = logger;
 
+  
   [HttpPost(Name = "GetWeatherForecast")]
   public IActionResult Post([FromBody] Product product)
   {
-    ProductValidator validator = new ProductValidator();
+    var validator = new ProductValidator();
 
     validator.ValidateAndThrow(product);
     return Ok(product);

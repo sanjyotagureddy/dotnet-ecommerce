@@ -25,7 +25,9 @@ public static class ServiceExtensions
       options.JsonSerializerOptions.WriteIndented = true;
       options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
-
+    var maskingConfig = new Dictionary<string, List<string>>();
+    configuration.GetSection("MaskingConfig").Bind(maskingConfig);
+    services.AddSingleton(maskingConfig);
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen(sg =>

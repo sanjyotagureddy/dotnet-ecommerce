@@ -1,12 +1,13 @@
-﻿using MeraStore.Shared.Common.Logging.Attributes;
+﻿using System.Net;
+using MeraStore.Shared.Common.Logging.Attributes;
+using MeraStore.User.Shared.Common;
+using MeraStore.User.Shared.Common.ErrorsCodes;
 using MeraStore.User.Shared.Common.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using Serilog.Context;
-using MeraStore.Shared.Common.Logging.Models;
-using MeraStore.User.Shared.Common.Errors;
 
 namespace MeraStore.Shared.Common.WebApi.Middlewares
 {
@@ -33,7 +34,7 @@ namespace MeraStore.Shared.Common.WebApi.Middlewares
       }
       catch (Exception ex)
       {
-        var wrappedException = new BaseAppException("GEN", GetRequestEventCode(context), "500", ex);
+        var wrappedException = new BaseAppException(ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.General), GetRequestEventCode(context) ?? EventCodeProvider.GetEventCode(Constants.EventCodes.InternalServerError), ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.InternalServerError), HttpStatusCode.InternalServerError, ex);
 
         // Handle unexpected exceptions with logging
         await HandleExceptionAsync(context, wrappedException);
@@ -68,7 +69,7 @@ namespace MeraStore.Shared.Common.WebApi.Middlewares
     private Task HandleExceptionAsync(HttpContext context, BaseAppException exception)
     {
       context.Response.ContentType = "application/problem+json";
-      context.Response.StatusCode = 500; // Default to 500 for unexpected errors
+      context.Response.StatusCode = (int)exception.StatusCode; // Default to 500 for unexpected errors
 
       var problemDetails = new ProblemDetails()
       {
@@ -79,7 +80,7 @@ namespace MeraStore.Shared.Common.WebApi.Middlewares
         Extensions =
                 {
                     ["errorCode"] = exception.FullErrorCode,
-                    ["service"] = exception.ServiceIdentifier
+                    ["service"] = ServiceProvider.GetServiceKey(exception.ServiceIdentifier)
                 }
       };
 

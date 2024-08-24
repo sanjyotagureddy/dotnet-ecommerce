@@ -20,9 +20,6 @@ namespace MeraStore.Shared.Common.Logging
       var settings = new ConnectionSettings(new Uri(elasticUri))
         .DefaultIndex(Constants.SerilogIndex.RequestResponse);
 
-      var maskingConfig = new Dictionary<string, List<string>>();
-      configuration.GetSection("MaskingConfig").Bind(maskingConfig);
-
       var elasticClient = new ElasticClient(settings);
       services.AddSingleton<IElasticClient>(elasticClient);
 

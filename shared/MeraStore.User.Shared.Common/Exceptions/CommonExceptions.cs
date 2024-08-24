@@ -1,37 +1,61 @@
-﻿using MeraStore.User.Shared.Common.Errors;
+﻿using System.Net;
+using MeraStore.User.Shared.Common.ErrorsCodes;
 
 namespace MeraStore.User.Shared.Common.Exceptions;
 
-[ExcludeFromCodeCoverage]
 public class CommonExceptions
 {
-  public class ApiCommunicationException(string message) : BaseAppException(ServiceIdentifiers.ApiGateway,
-    EventCodes.ServiceError, ErrorCodes.BadGatewayError, message);
+  public class ApiCommunicationException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.ApiGateway),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.ServiceError),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.BadGatewayError),
+    HttpStatusCode.BadGateway, message);
 
-  public class EventBusCommunicationException(string message) : BaseAppException(ServiceIdentifiers.EventBus,
-    EventCodes.ServiceError, ErrorCodes.ServiceUnavailableError, message);
+  public class EventBusCommunicationException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.EventBus),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.ServiceError),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.ServiceUnavailableError),
+    HttpStatusCode.ServiceUnavailable, message);
 
-  public class ValidationException(string message) : BaseAppException(ServiceIdentifiers.DataValidation,
-    EventCodes.DataValidationError, ErrorCodes.ValidationError, message);
+  public class ValidationException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.DataValidation),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.DataValidationError),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.ValidationError),
+    HttpStatusCode.UnprocessableEntity, message);
 
-  public class BusinessRuleException(string message) : BaseAppException(ServiceIdentifiers.DataValidation,
-    EventCodes.ResourceConflict, ErrorCodes.UnprocessableEntityError, message);
+  public class BusinessRuleException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.DataValidation),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.ResourceConflict),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.UnprocessableEntityError),
+    HttpStatusCode.UnprocessableEntity, message);
 
-  public class ConfigurationException(string message) : BaseAppException(ServiceIdentifiers.Configuration,
-    EventCodes.ServiceError, ErrorCodes.InternalServerError, message);
+  public class ConfigurationException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.Configuration),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.ServiceError),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.InternalServerError),
+    HttpStatusCode.InternalServerError, message);
 
-  public class DatabaseConnectionException(string message) : BaseAppException(ServiceIdentifiers.Database,
-    EventCodes.ServiceError, ErrorCodes.InternalServerError, message);
+  public class DatabaseConnectionException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.Database),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.ServiceError),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.InternalServerError),
+    HttpStatusCode.InternalServerError, message);
 
-  public class DataNotFoundException(string message) : BaseAppException(ServiceIdentifiers.Database,
-    EventCodes.ResourceNotFound, ErrorCodes.DataNotFoundError, message);
+  public class DataNotFoundException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.Database),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.ResourceNotFound),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.DataNotFoundError),
+    HttpStatusCode.NotFound, message);
 
-  public class DataIntegrityException(string message) : BaseAppException(ServiceIdentifiers.Database,
-    EventCodes.DataIntegrityViolation, ErrorCodes.InternalServerError, message);
+  public class DataIntegrityException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.Database),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.DataIntegrityViolation),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.ConflictError),
+    HttpStatusCode.Conflict, message);
 
-  public class SecurityException(string message) : BaseAppException(ServiceIdentifiers.Security,
-    EventCodes.UnauthorizedAccess, ErrorCodes.InternalServerError, message);
-
-  public class PermissionDeniedException(string message) : BaseAppException(ServiceIdentifiers.Security,
-    EventCodes.Forbidden, ErrorCodes.ForbiddenError, message);
+  public class DuplicateDataException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.Database),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.ResourceConflict),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.ConflictError),
+    HttpStatusCode.Conflict, message);
 }

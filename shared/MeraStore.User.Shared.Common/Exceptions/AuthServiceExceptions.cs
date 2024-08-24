@@ -1,13 +1,19 @@
-﻿using MeraStore.User.Shared.Common.Errors;
+﻿using System.Net;
+using MeraStore.User.Shared.Common.ErrorsCodes;
 
 namespace MeraStore.User.Shared.Common.Exceptions;
 
-[ExcludeFromCodeCoverage]
 public class AuthServiceExceptions
 {
-  public class AuthenticationException(string message) : BaseAppException(ServiceIdentifiers.AuthService,
-    EventCodes.UnauthorizedAccess, ErrorCodes.UnauthorizedError, message);
+  public class AuthenticationException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.AuthService),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.UnauthorizedAccess),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.UnauthorizedError),
+    HttpStatusCode.Unauthorized, message);
 
-  public class AuthorizationException(string message) : BaseAppException(ServiceIdentifiers.AuthService,
-    EventCodes.Forbidden, ErrorCodes.ForbiddenError, message);
+  public class AuthorizationException(string message) : BaseAppException(
+    ServiceProvider.GetServiceCode(Constants.ServiceIdentifiers.AuthService),
+    EventCodeProvider.GetEventCode(Constants.EventCodes.Forbidden),
+    ErrorCodeProvider.GetErrorCode(Constants.ErrorCodes.ForbiddenError),
+    HttpStatusCode.Forbidden, message);
 }
