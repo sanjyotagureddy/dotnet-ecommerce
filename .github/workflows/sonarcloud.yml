@@ -41,6 +41,7 @@ jobs:
         shell: powershell
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool install --global dotnet-sonarscanner
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
       - name: Restore Aspire
@@ -52,7 +53,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"sanjyotagureddy_dotnet-ecommerce" /o:"sanjyotagureddy" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.language="cs" /d:sonar.inclusions="**/*.cs" /d:sonar.scanner.scanAll=false
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"sanjyotagureddy_dotnet-ecommerce" /o:"sanjyotagureddy" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.language="cs" /d:sonar.inclusions="**/*.cs" /d:sonar.tests="**/*Tests.csproj" /d:sonar.test.inclusions="**/*Tests/**/*.cs" /d:sonar.scanner.scanAll=false
 
           dotnet restore dotnet-ecommerce.sln
           dotnet build dotnet-ecommerce.sln --no-restore
